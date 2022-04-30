@@ -48,6 +48,9 @@
         ],
         "stylefix": [
             "@php ./vendor/bin/php-cs-fixer fix"
+        ],
+        "stylefix-test": [
+            "@php ./vendor/bin/php-cs-fixer fix --dry-run"
         ]
     },
     "extra": {
