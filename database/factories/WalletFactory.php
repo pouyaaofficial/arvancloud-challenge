@@ -2,12 +2,10 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
- */
-class UserFactory extends Factory
+class WalletFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,7 +15,8 @@ class UserFactory extends Factory
     public function definition()
     {
         return [
-            'phone_number' => $this->faker->numerify('###########'),
+            'user_id' => User::factory(),
+            'balance' => $this->faker->randomFloat(3, 1000, 99999),
         ];
     }
 }
