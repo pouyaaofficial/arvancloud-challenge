@@ -13,3 +13,5 @@ yarn-error.log
 /.idea
 /.vscode
 .php-cs-fixer.cache
+/.scribe
+/public/docs

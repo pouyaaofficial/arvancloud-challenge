@@ -15,6 +15,7 @@
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
         "friendsofphp/php-cs-fixer": "^3.8",
+        "knuckleswtf/scribe": "^3.27",
         "laravel/sail": "^1.0.1",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^6.1",
@@ -52,6 +53,9 @@
         ],
         "stylefix-test": [
             "@php ./vendor/bin/php-cs-fixer fix --dry-run"
+        ],
+        "docgen": [
+            "@php artisan scribe:generate -v --force"
         ]
     },
     "extra": {

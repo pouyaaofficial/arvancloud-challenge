@@ -13,11 +13,32 @@ use Illuminate\Http\JsonResponse;
 
 class UserController extends Controller
 {
+    /**
+     * User Profile.
+     *
+     * Gets User full Profile.
+     *
+     * @authenticated
+     * @group User
+     *
+     * @apiResource App\Http\Resources\UserResource
+     * @apiResourceModel App\Models\User
+     */
     public function show(GetUserRequest $request, User $user): JsonResponse
     {
         return $this->responseApi(new UserResource($user));
     }
 
+    /**
+     * Signup User.
+     *
+     * Creates user or return existing user.
+     *
+     * @group User
+     *
+     * @apiResource App\Http\Resources\UserThumbnailResource
+     * @apiResourceModel App\Models\User
+     */
     public function store(CreateUserRequest $request): JsonResponse
     {
         $user = User::firstWhere('phone_number', $request->phone_number);
