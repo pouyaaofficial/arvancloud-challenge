@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\UserController;
+use App\Http\Middleware\PhoneNumberAuth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,3 +18,10 @@ Route::apiResource('users', UserController::class)
   ->only([
       'store',
   ]);
+
+Route::middleware(PhoneNumberAuth::class)->group(function () {
+    Route::apiResource('users', UserController::class)
+    ->only([
+      'show',
+    ]);
+});
