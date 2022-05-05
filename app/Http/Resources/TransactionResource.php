@@ -2,9 +2,10 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class UserResource extends JsonResource
+class TransactionResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,10 +17,8 @@ class UserResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id,
-            'phone_number' => $this->phone_number,
-            'balance' => $this->wallet->balance,
-            'transactions' => TransactionResource::collection($this->wallet->transactions),
+           'amount' => $this->transactionable->amount,
+           'datetime' => Carbon::create($this->created_at)->toDateTimeString(),
         ];
     }
 }

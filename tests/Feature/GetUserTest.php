@@ -2,6 +2,7 @@
 
 namespace App\Tests\Feature;
 
+use App\Models\Discount;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -16,6 +17,15 @@ class GetUserTest extends TestCase
     {
         $user = User::factory()->create();
 
+        $discounts = Discount::factory(2)
+        ->sequence(
+            ['amount' => 10.100],
+            ['amount' => 20.200],
+        )->create();
+
+        $user->wallet->applyDiscount($discounts->first());
+        $user->wallet->applyDiscount($discounts->second());
+
         $this->setUser($user)
         ->getJson("{$this->url}/{$user->id}")
         ->assertOk()
@@ -23,6 +33,11 @@ class GetUserTest extends TestCase
             'data' => [
                 'id' => $user->id,
                 'phone_number' => $user->phone_number,
+                'balance' => 30.300,
+                'transactions' => [
+                    ['amount' => 10.100],
+                    ['amount' => 20.200],
+                ],
             ],
         ]);
     }
@@ -43,5 +58,14 @@ class GetUserTest extends TestCase
         $this->setUser($users->first())
         ->getJson("$this->url/{$users->second()->id}")
         ->assertForbidden();
+    }
+
+    public function test_it_returns_404_when_user_not_found()
+    {
+        $user = User::factory()->create();
+
+        $this->setUser($user)
+        ->getJson("$this->url/0")
+        ->assertNotFound();
     }
 }
