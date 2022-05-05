@@ -13,12 +13,33 @@ class Wallet extends Model
         'balance',
     ];
 
-    protected $casts = [
-        'balance' => 'float',
+    protected $with = [
+        'transactions.transactionable',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function discounts()
+    {
+        return $this->morphedByMany(Discount::class, 'transactionable')
+        ->using(Transactionable::class)
+        ->withTimestamps();
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(Transactionable::class);
+    }
+
+    public function applyDiscount(Discount $discount)
+    {
+        \DB::transaction(function () use ($discount) {
+            $this->discounts()->attach($discount);
+            $this->balance += $discount->amount;
+            $this->save();
+        });
     }
 }
