@@ -18,5 +18,6 @@ Route::middleware(PhoneNumberAuth::class)->group(function () {
     Route::apiResource('discounts', DiscountController::class)
     ->only([
       'index',
+      'store',
     ]);
 });
