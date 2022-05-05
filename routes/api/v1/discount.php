@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\DiscountController;
+use App\Http\Controllers\Api\UserDiscountController;
 use App\Http\Middleware\PhoneNumberAuth;
 use Illuminate\Support\Facades\Route;
 
@@ -19,5 +20,10 @@ Route::middleware(PhoneNumberAuth::class)->group(function () {
     ->only([
       'index',
       'store',
+    ]);
+
+    Route::apiResource('discounts.users', UserDiscountController::class)
+    ->only([
+      'index',
     ]);
 });
