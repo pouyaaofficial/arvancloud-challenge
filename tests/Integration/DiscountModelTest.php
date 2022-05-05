@@ -3,6 +3,7 @@
 namespace Tests\Integration;
 
 use App\Models\Discount;
+use App\Models\User;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -31,5 +32,25 @@ class DiscountModelTest extends TestCase
         Discount::factory(['code' => $this->model->code])->create();
 
         $this->assertEquals(1, Discount::count());
+    }
+
+    public function test_discount_has_count()
+    {
+        $this->model->update(['count' => 1]);
+        $this->assertTrue($this->model->hasCapacity());
+
+        $this->model->update(['count' => 0]);
+        $this->assertFalse($this->model->hasCapacity());
+    }
+
+    public function test_discount_has_capacity()
+    {
+        $user = User::factory()->create();
+
+        $this->model->update(['count' => 1]);
+        $this->assertTrue($this->model->hasCapacity());
+
+        $user->wallet->applyDiscount($this->model);
+        $this->assertFalse($this->model->fresh()->hasCapacity());
     }
 }

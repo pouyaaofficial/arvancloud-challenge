@@ -2,6 +2,7 @@
 
 namespace Tests\Integration;
 
+use App\Models\Discount;
 use App\Models\User;
 use App\Models\Wallet;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -27,5 +28,14 @@ class UserModelTest extends TestCase
     public function test_it_creates_a_wallet_with_user_properly()
     {
         $this->assertInstanceOf(Wallet::class, $this->model->wallet);
+    }
+
+    public function test_user_has_discount()
+    {
+        $discount = Discount::factory()->create();
+        $this->assertFalse($this->model->hasDiscount($discount));
+
+        $this->model->wallet->applyDiscount($discount);
+        $this->assertTrue($this->model->fresh()->hasDiscount($discount));
     }
 }

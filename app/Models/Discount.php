@@ -21,4 +21,9 @@ class Discount extends Model
     {
         return $this->morphToMany(Wallet::class, 'transactionable');
     }
+
+    public function hasCapacity(): bool
+    {
+        return $this->count > $this->wallets->count();
+    }
 }

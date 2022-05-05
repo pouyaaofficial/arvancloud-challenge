@@ -23,6 +23,11 @@ class User extends Authenticatable
         return $this->hasOne(Wallet::class);
     }
 
+    public function hasDiscount(Discount $discount): bool
+    {
+        return $this->wallet->discounts->contains($discount);
+    }
+
     public static function boot()
     {
         parent::boot();
