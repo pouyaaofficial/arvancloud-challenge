@@ -26,4 +26,9 @@ class Discount extends Model
     {
         return $this->count > $this->wallets->count();
     }
+
+    public function isActive(): bool
+    {
+        return now()->gte($this->start_time) && now()->lte($this->expiration_time);
+    }
 }

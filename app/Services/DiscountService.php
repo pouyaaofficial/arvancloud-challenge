@@ -14,13 +14,21 @@ class DiscountService
 
     public function apply(User $user)
     {
-        \DB::beginTransaction();
-
-        if ($this->discount->hasCapacity() && !$user->hasDiscount($this->discount)) {
-            $user->wallet->applyDiscount($this->discount);
-            DiscountApplied::dispatch($user, $this->discount);
+        if (!$this->discount->isActive()) {
+            return;
         }
 
-        \DB::commit();
+        if ($user->hasDiscount($this->discount)) {
+            return;
+        }
+
+        if (!$this->discount->hasCapacity()) {
+            return;
+        }
+
+        \DB::transaction(function () use ($user) {
+            $user->wallet->applyDiscount($this->discount);
+            DiscountApplied::dispatch($user, $this->discount);
+        });
     }
 }

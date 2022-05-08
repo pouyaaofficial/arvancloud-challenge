@@ -6,6 +6,7 @@ use App\Events\DiscountApplied;
 use App\Models\Discount;
 use App\Models\User;
 use App\Services\DiscountService;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -55,5 +56,23 @@ class DiscountServiceTest extends TestCase
         $discount->refresh();
         (new DiscountService($discount))->apply($anotherUser);
         $this->assertCount(0, $anotherUser->fresh()->wallet->transactions);
+    }
+
+    public function test_it_cannot_apply_discount_over_active_time()
+    {
+        Carbon::setTestNow('2020-01-03 00:00:00');
+        $this->doesntExpectEvents(DiscountApplied::class);
+
+        $user = User::factory()->create();
+
+        $discount = Discount::factory([
+            'start_time' => '2020-01-01 00:00:00',
+            'expiration_time' => '2020-01-02 00:00:00',
+        ])->create();
+
+        (new DiscountService($discount))->apply($user);
+
+        $this->assertCount(0, $user->fresh()->wallet->transactions);
+        $this->assertSame(0.0, $user->fresh()->wallet->balance);
     }
 }

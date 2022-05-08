@@ -17,8 +17,8 @@ class DiscountFactory extends Factory
             'code' => $this->faker->unique()->word(),
             'amount' => $this->faker->randomFloat(3, 1000, 99999),
             'count' => $this->faker->randomNumber(),
-            'start_time' => $this->faker->dateTimeBetween('now', '+6 months')->format('Y-m-d H:i:s'),
-            'expiration_time' => $this->faker->dateTimeBetween('+7 months', '+1 year')->format('Y-m-d H:i:s'),
+            'start_time' => $this->faker->dateTimeBetween('-6 months', 'now')->format('Y-m-d H:i:s'),
+            'expiration_time' => $this->faker->dateTimeBetween('+1minute', '+1 year')->format('Y-m-d H:i:s'),
         ];
     }
 }

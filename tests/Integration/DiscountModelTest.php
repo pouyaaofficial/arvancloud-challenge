@@ -4,6 +4,7 @@ namespace Tests\Integration;
 
 use App\Models\Discount;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -52,5 +53,22 @@ class DiscountModelTest extends TestCase
 
         $user->wallet->applyDiscount($this->model);
         $this->assertFalse($this->model->fresh()->hasCapacity());
+    }
+
+    public function test_discount_is_active()
+    {
+        $this->model->update([
+            'start_time' => '2020-01-01 00:00:00',
+            'expiration_time' => '2020-01-02 00:00:00',
+        ]);
+
+        Carbon::setTestNow('2020-01-01 00:00:00');
+        $this->assertTrue($this->model->isActive());
+
+        Carbon::setTestNow('2019-12-29 00:00:00');
+        $this->assertFalse($this->model->isActive());
+
+        Carbon::setTestNow('2020-01-03 00:00:00');
+        $this->assertFalse($this->model->isActive());
     }
 }
