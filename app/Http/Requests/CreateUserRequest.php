@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Actions\CreateUser;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateUserRequest extends FormRequest
@@ -13,11 +14,6 @@ class CreateUserRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'phone_number' => [
-                'required',
-                'digits:11',
-            ],
-        ];
+        return CreateUser::rules();
     }
 }

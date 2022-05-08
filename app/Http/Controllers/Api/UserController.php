@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Events\UserCreated;
+use App\Actions\CreateUser;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\GetUserRequest;
@@ -39,14 +39,9 @@ class UserController extends Controller
      * @apiResource App\Http\Resources\UserThumbnailResource
      * @apiResourceModel App\Models\User
      */
-    public function store(CreateUserRequest $request): JsonResponse
+    public function store(CreateUserRequest $request, CreateUser $creator): JsonResponse
     {
-        $user = User::firstWhere('phone_number', $request->phone_number);
-
-        if (is_null($user)) {
-            $user = User::create(['phone_number' => $request->phone_number]);
-            UserCreated::dispatch($user);
-        }
+        $user = $creator->create($request->validated());
 
         return $this->created(new UserThumbnailResource($user));
     }
