@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Actions\CreateUser;
 use Illuminate\Foundation\Http\FormRequest;
 
 class CreateUserDiscountRequest extends FormRequest
@@ -13,12 +14,13 @@ class CreateUserDiscountRequest extends FormRequest
      */
     public function rules()
     {
-        return [
-            'code' => [
-                'required',
-                'string',
-                'exists:discounts,code',
+        return array_merge(CreateUser::rules(), [
+                'code' => [
+                    'required',
+                    'string',
+                    'exists:discounts,code',
+                ],
             ],
-        ];
+        );
     }
 }

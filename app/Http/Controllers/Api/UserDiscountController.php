@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Actions\CreateUser;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateUserDiscountRequest;
 use App\Http\Requests\GetAllUserDiscountRequest;
@@ -16,15 +17,19 @@ class UserDiscountController extends Controller
     /**
      * Apply Discount.
      *
-     * Tries to apply discount on user's wallet.
+     * Tries to apply the discount on the user's wallet.
+     * This endpoint uses a job queue to prevent Race Condition problem.
+     * so It always returns a success status (200).
+     * For checking that discount has applied, use api/v1/users/{id} endpoint.
+     * It can be better by using Webhook or Notification Systems.
      *
-     * @authenticated
      * @group User
      *
      * @response 200 {"data": []}
      */
-    public function store(CreateUserDiscountRequest $request, User $user): JsonResponse
+    public function store(CreateUserDiscountRequest $request, CreateUser $creator): JsonResponse
     {
+        $user = $creator->create($request->validated());
         $discount = Discount::firstWhere('code', $request->code);
 
         ApplyDiscount::dispatch($user, $discount);

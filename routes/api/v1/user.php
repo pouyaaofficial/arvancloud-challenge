@@ -20,14 +20,11 @@ Route::apiResource('users', UserController::class)
       'store',
   ]);
 
-Route::middleware(PhoneNumberAuth::class)->group(function () {
-    Route::apiResource('users', UserController::class)
-    ->only([
-      'show',
-    ]);
+  Route::middleware(PhoneNumberAuth::class)->group(function () {
+      Route::apiResource('users', UserController::class)
+        ->only([
+          'show',
+        ]);
+  });
 
-    Route::apiResource('users.discounts', UserDiscountController::class)
-    ->only([
-      'store',
-    ]);
-});
+Route::post('user/discount', [UserDiscountController::class, 'store']);

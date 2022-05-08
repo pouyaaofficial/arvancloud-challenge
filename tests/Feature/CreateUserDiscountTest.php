@@ -13,7 +13,7 @@ class CreateUserDiscountTest extends TestCase
 {
     use RefreshDatabase;
 
-    private string $url = '/api/v1/users/{id}/discounts';
+    private string $url = '/api/v1/user/discount';
 
     public function test_it_apply_discount_queue_works_properly()
     {
@@ -25,14 +25,28 @@ class CreateUserDiscountTest extends TestCase
         $this->assertEquals(0, $user->wallet->balance);
         $this->assertCount(0, $user->wallet->transactions);
 
-        $url = str_replace('{id}', $user->id, $this->url);
-
-        $this->setUser($user)
-        ->postJson($url, [
+        $this->postJson($this->url, [
             'code' => $discount->code,
+            'phone_number' => $user->phone_number,
         ])->assertOk();
 
         Queue::assertPushed(fn (ApplyDiscount $job) => $job->discount->id === $discount->id);
+    }
+
+    public function test_it_registers_user_if_not_exists()
+    {
+        Queue::fake();
+
+        $discount = Discount::factory(['amount' => 150])->create();
+
+        $this->assertFalse(User::where('phone_number', '99999999999')->exists());
+
+        $this->postJson($this->url, [
+            'code' => $discount->code,
+            'phone_number' => '99999999999',
+        ])->assertOk();
+
+        $this->assertTrue(User::where('phone_number', '99999999999')->exists());
     }
 
     public function test_it_returns_422_when_code_is_invalid()
@@ -40,31 +54,18 @@ class CreateUserDiscountTest extends TestCase
         $user = User::factory()->create();
         Discount::factory()->create();
 
-        $url = str_replace('{id}', $user->id, $this->url);
-
-        $this->setUser($user)
-        ->postJson($url, [
+        $this->postJson($this->url, [
             'code' => 0,
+            'phone_number' => $user->phone_number,
         ])
         ->assertStatus(422)
         ->assertJsonValidationErrors(['code']);
 
-        $this->setUser($user)
-        ->postJson($url, [
+        $this->postJson($this->url, [
             'code' => 'some_code',
+            'phone_number' => $user->phone_number,
         ])
         ->assertStatus(422)
         ->assertJsonValidationErrors(['code']);
-    }
-
-    public function test_it_cannot_apply_discount_without_auth()
-    {
-        $user = User::factory()->create();
-
-        $url = str_replace('{id}', $user->id, $this->url);
-
-        $this->postJson($url)
-        ->assertStatus(422)
-        ->assertJsonValidationErrors('phone_number');
     }
 }
