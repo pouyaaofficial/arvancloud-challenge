@@ -10,7 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class DiscountServiceTest extends TestCase
+class ApplyDiscountTest extends TestCase
 {
     use RefreshDatabase;
 
