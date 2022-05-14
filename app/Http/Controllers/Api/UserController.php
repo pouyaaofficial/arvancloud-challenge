@@ -26,7 +26,7 @@ class UserController extends Controller
      */
     public function show(GetUserRequest $request, User $user): JsonResponse
     {
-        return $this->responseApi(new UserResource($user));
+        return $this->ok(new UserResource($user));
     }
 
     /**
