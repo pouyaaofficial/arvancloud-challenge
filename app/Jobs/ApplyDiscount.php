@@ -2,9 +2,9 @@
 
 namespace App\Jobs;
 
+use App\Actions\ApplyDiscount as ApplyDiscountAction;
 use App\Models\Discount;
 use App\Models\User;
-use App\Services\DiscountService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -37,7 +37,7 @@ class ApplyDiscount implements ShouldQueue, ShouldBeUnique
      */
     public function handle()
     {
-        (new DiscountService($this->discount))->apply($this->user);
+        app(ApplyDiscountAction::class)->apply($this->discount, $this->user);
     }
 
     public function uniqueId()
