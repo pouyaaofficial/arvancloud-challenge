@@ -7,6 +7,7 @@ use App\Models\Discount;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
+use Illuminate\Support\Facades\Redis;
 use Tests\TestCase;
 
 class CreateUserDiscountTest extends TestCase
@@ -17,6 +18,7 @@ class CreateUserDiscountTest extends TestCase
 
     public function test_it_apply_discount_queue_works_properly()
     {
+        Redis::flushDB();
         Queue::fake();
 
         $user = User::factory()->create();

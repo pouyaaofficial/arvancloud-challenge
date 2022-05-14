@@ -12,6 +12,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\Middleware\WithoutOverlapping;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Cache;
 
 class ApplyDiscount implements ShouldQueue, ShouldBeUnique
 {
@@ -42,6 +43,11 @@ class ApplyDiscount implements ShouldQueue, ShouldBeUnique
     public function uniqueId()
     {
         return $this->user->id;
+    }
+
+    public function uniqueVia()
+    {
+        return Cache::driver('redis');
     }
 
     public function middleware()
